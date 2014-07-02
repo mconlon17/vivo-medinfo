@@ -368,6 +368,56 @@ def improve_certification(cert):
     certs.append(cert)
     return certs
 
+def select_degree_fields(rawdata):
+    """
+    Given degree fields from medinfo raw data, select fields that appear to
+    desceribe degrees (not other training)
+    """
+    k = 0
+    fields = []
+    data = []
+    for d in rawdata:
+        if d != '':
+            data.append(d)
+    print "Before"
+    print data
+    while k < len(data):
+        field = data[k]
+        print "\tField",field
+        if field == 'Medical School':
+            entry = 'Medical School - ' + data[k+1]
+            k = k + 2
+            if data[k][0] == '1' or data[k][0] == '2':
+                entry = entry + ', ' + data[k]
+                k = k + 1
+            fields.append(entry)
+        elif field == 'Residency':
+            k = k + 3
+        elif field == 'Intern':
+            k = k + 3
+        elif field == 'Fellow':
+            k = k + 3
+        elif field.find('Medical School') > -1:
+            fields = fields.append(field)
+            k = k + 1
+        elif field.find('Residency') > -1:
+            k = k + 1
+        elif field.find('Residnecy') > -1:
+            k = k + 1
+        elif field.find('Fellow') > -1:
+            k = k + 1
+        elif field.find('Intern') > -1:
+            k = k + 1
+        elif field.find('ertificate') > -1:
+            k = k + 1
+        else:
+            if field is not None:
+                fields.append(field)
+            k = k + 1
+    print "After"
+    print fields
+    return fields
+
 def prepare_medinfo(input_file_name):
     """
     Given a file name with medinfo data, use element tree to parse the
@@ -388,8 +438,11 @@ def prepare_medinfo(input_file_name):
                 mperson['honors'] = child.text
             mperson['degrees'] = []
             for child in provider.findall('education'):
-                for p in child.findall('p'):
-                    mperson['degrees'].append(p.text)
+                rawdegrees = select_degree_fields(child.text.split('\n'))
+                for rawdegree in rawdegrees:
+                    rawdegree.strip()
+                    if len(rawdegree) > 0:
+                        mperson['degrees'].append(rawdegree)
             mperson['board_certifications'] = []
             for child in provider.findall('boardcertification'):
                 rawcerts = child.text.split('\n')
@@ -466,12 +519,12 @@ for mperson in medinfo:
     if person_uri is not None:
         mperson['uri'] = person_uri
         found = found + 1
-        if 'board_certifications' in mperson and \
-            len(mperson['board_certifications']) > 0:
+        if 'degrees' in mperson and \
+            len(mperson['degrees']) > 0:
             k = k + 1
             print k, mperson['ufid']
-            for cert in mperson['board_certifications']:
-                print '\t\t',cert
+            for degree in mperson['degrees']:
+                print '\t\t',degree
 
     else:
         not_found = not_found + 1
