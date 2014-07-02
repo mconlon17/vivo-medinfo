@@ -1,6 +1,6 @@
 #!/usr/bin/env/python
 """
-    update_medinfo.py -- Reaad medinfo XML data and update corresponding
+    update_medinfo.py -- Reaad medinfo XML data And update corresponding
     information in VIVO
 
     Version 0.0 MC 2014-06-24
@@ -30,7 +30,7 @@ import codecs
 def improve_certification(cert):
     """
     Board certification information is provided by physicians in open text form.
-    This function tkaes the variations supplied by the physicians and returns
+    This function tkaes the variations supplied by the physicians And returns
     standard certification names.  Input is text.  Output is a list of certs.
     """
     cert = cert.title()
@@ -68,7 +68,7 @@ def improve_certification(cert):
         return certs
     if cert.find('American Board Of Oral Medicine 1986 And American Board Of Oral And Maxillofacial Pathology') > -1:
         certs.append('Oral Medicine')
-        certs.append('Oral and Maxillofacial Pathology')
+        certs.append('Oral And Maxillofacial Pathology')
         return certs
     if cert.find('Board Certified In Both General And Vascular Surgery By The American Board Of Surgery') > -1:
         certs.append('General Surgery')
@@ -84,7 +84,7 @@ def improve_certification(cert):
         certs.append('General Surgery')
         return certs
     if cert.find('Blood Banking And Transfusion Medicine Certification - American Board Of Pathology, 1993') > -1:
-        certs.append('Blood Banking and Transfusion Medicine')
+        certs.append('Blood Banking And Transfusion Medicine')
         return certs
     if cert.find('Medical Management') > -1:
         certs.append('Medical Management')
@@ -105,7 +105,7 @@ def improve_certification(cert):
     if cert.find('American Academy Of Dermatology') > -1:
         return certs
     if cert.find('American Board Of Oral And Maxillofacial Pathology') > -1:
-        certs.append('Oral and Maxillofacial Pathology')
+        certs.append('Oral And Maxillofacial Pathology')
         return certs
     if cert.find('National Board Of Medical Examiners') > -1:
         certs.append('National Board of Medical Examiners')
@@ -114,7 +114,7 @@ def improve_certification(cert):
         certs.append('General Psychiatry')
         return certs
     if cert.find('Abr Physics And') > -1:
-        certs.append('Physics and Radiobiology')
+        certs.append('Physics And Radiobiology')
         return certs
     if cert.find('Medical License') > -1:
         return certs
@@ -169,7 +169,7 @@ def improve_certification(cert):
         certs.append('National Board of Medical Examiners')
         return certs
     if cert.find('American Board Of Obstetrics And Gynecology') > -1:
-        certs.append('Obstetrics and Gyencology')
+        certs.append('Obstetrics And Gyencology')
         return certs
     if cert.find('Maternal-Fetal Medicine') > -1:
         certs.append('Maternal-Fetal Medicine')
@@ -193,6 +193,9 @@ def improve_certification(cert):
         certs.append('General Surgery')
         return certs
     if cert.find('American Board Of Radiology, 1991') > -1:
+        certs.append('Radiology')
+        return certs
+    if cert.find('American Board Of Radiology, 1993') > -1:
         certs.append('Radiology')
         return certs
     if cert.find('Diplomate American Board Of Periodontology') > -1:
@@ -225,7 +228,7 @@ def improve_certification(cert):
         return certs
     if cert.find('Vascukar And Interventional Radiology') > -1:
         certs.append('Vascular Radiology')
-        certs.append('Interventional Rdiology')
+        certs.append('Interventional Radiology')
         return certs
     if cert.find('Transthoracic Plus Transesophageal Certification, National Board Of Echocardiography') > -1:
         certs.append('Transthoracic Echocardiography')
@@ -268,13 +271,107 @@ def improve_certification(cert):
     if cert.find('Clinical Health Psychology') > -1:
         certs.append('Clinical Health Psychology')
         return certs
+    if cert.find('Internal Medicine') > -1:
+        certs.append('Internal Medicine')
+        return certs
+    if cert.find('Adult Psychiatry') > -1:
+        certs.append('Adult Psychiatry')
+        return certs
+    if cert.find('Of Endondontics') > -1:
+        certs.append('Endodontics')
+        return certs
+    if cert.find('Geriatric Medicine And Internal Medicine') > -1:
+        certs.append('Geriatric Medicine')
+        certs.append('Internal Medicine')
+        return certs
+    if cert.find('In Psychiatry') > -1:
+        certs.append('Psychiatry')
+        return certs
+    if cert.find('Usmle') > -1:
+        return certs
+    if cert.find('Lactation') > -1:
+        return certs
+    if cert.find('Fellow') > -1:
+        return certs
+    if cert.find('General Pediatrics') > -1:
+        certs.append('General Pediatrics')
+        return certs
+    if cert.find('Pediatric Critical Care Medicine') > -1:
+        certs.append('Pediatric Critical Care Medicine')
+        return certs
+    if cert.find('Certificate Of Registration') > -1:
+        return certs
+    if cert.find('Masters Certificate') > -1:
+        return certs
+    if cert.find('Certified Psychoanalyst') > -1:
+        return certs
+    if cert.find('Abog') > -1:
+        certs.append('Obstetrics And Gynecology')
+        return certs
+    if cert.find('Child And Adolescent Psychiatry') > -1:
+        certs.append('Child Psychiatry')
+        certs.append('Adolescent Psychiatry')
+        return certs
+    if cert.find('Certification, American Board Of Pediatrics') > -1:
+        certs.append('Pediatrics')
+        return certs
+    if cert.find('Certification, American Board Of Medical Genetics, Clinical Genetics') > -1:
+        certs.append('Medical Genetics')
+        return certs
+    if cert.find('(Abcc)') > -1:
+        certs.append('Clinical Chemistry')
+        return certs
+    if cert.find('American Board Of Radiology') > -1:
+        certs.append('Radiology')
+        return certs
+    if cert.find('American Board Of Endodontics') > -1:
+        certs.append('Endodontics')
+        return certs
+    if cert.find('Endocrinology Diabetes And Metabolism') > -1:
+        certs.append('Endocrinology, Diabetes And Metabolism')
+        return certs
+    if cert.find('Infectious Diseases') > -1:
+        certs.append('Infectious Disease')
+        return certs
+    if cert.find('Internal Medcine') > -1:
+        certs.append('Infectious Medicine')
+        return certs
+    if cert.find('Maternal Fetal Medicine') > -1:
+        certs.append('Maternal-Fetal Medicine')
+        return certs
+    if cert.find('Neprhology') > -1:
+        certs.append('Nephrology')
+        return certs
+    if cert.find('Pediartic Endocrinology') > -1:
+        certs.append('Pediatric Endocrinology')
+        return certs
+    if cert.find('Pediatric Pulmonary') > -1:
+        certs.append('Pediatric Pulmonology')
+        return certs
+    if cert == 'Pediatric Critical Care':
+        certs.append('Pediatric Critical Care Medicine')
+        return certs
+    if cert == 'Pediatrics Critical Care Medicine':
+        certs.append('Pediatric Critical Care Medicine')
+        return certs
+    if cert.find('Orthopaedics Surgery') > -1:
+        certs.append('Orthopaedic Surgery')
+        return certs
+    if cert.find('Orthopedic Surgery') > -1:
+        certs.append('Orthopaedic Surgery')
+        return certs
+    if cert.find('Obstetrics And Gyencology') > -1:
+        certs.append('Obstetrics And Gynecology')
+        return certs
+    if cert.find('Ecfmg') > -1:
+        return certs
     certs.append(cert)
     return certs
 
 def prepare_medinfo(input_file_name):
     """
     Given a file name with medinfo data, use element tree to parse the
-    XML found in the file and return a list of VIVO person data structures
+    XML found in the file And return a list of VIVO person data structures
     """
     tree = ET.parse(input_file_name)
     root = tree.getroot()
@@ -301,20 +398,33 @@ def prepare_medinfo(input_file_name):
                     if len(rawcert) > 0:
                         certs = improve_certification(rawcert)
                         for cert in certs:
-                            if len(cert) > 0:
+                            if len(cert) > 0 and cert not in \
+                                mperson['board_certifications']:
                                 mperson['board_certifications'].append(cert)
             medinfo.append(mperson)
     return medinfo
 
 def update_person(vperson, sperson):
     """
-    Given a VIVO person object and a source person object, generate the RDF
+    Given a VIVO person object And a source person object, generate the RDF
     necessary to update the data for the person in VIVO so as to match the
     source
     """
     ardf = ""
     srdf = ""
     return [ardf, srdf]
+
+def tabulate_certifications(medinfo):
+    """
+    Given prepared medinfo, tabulate the occurances of the board certifications
+    """
+    table = {}
+    for mperson in medinfo:
+        if 'board_certifications' in mperson:
+            for cert in mperson['board_certifications']:
+                table[cert] = table.get(cert,0) + 1
+
+    return table
 
 # Start here
 
@@ -341,7 +451,11 @@ print >>log_file, datetime.now(), "Start"
 print >>log_file, datetime.now(), "Update Medinfo Version", __version__
 print >>log_file, datetime.now(), "VIVO Tools Version", vt.__version__
 print >>log_file, datetime.now(), "Read Medinfo Data"
+
 medinfo = prepare_medinfo(input_file_name)
+table = tabulate_certifications(medinfo)
+for key,val in sorted(table.items()):
+    print key,'\t\t',val
 
 print >>log_file, datetime.now(), "Medinfo Data has", len(medinfo), "people"
 found = 0
