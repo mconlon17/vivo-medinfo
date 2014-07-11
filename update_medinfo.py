@@ -5,12 +5,15 @@
 
     Version 0.0 MC 2014-06-24
     --  just starting
+    Version 0.1 MC 2014-07-11
+    --  isolates board certifications.  Writes educational text to a file
+        for hand editing
 """
 
 __author__ = "Michael Conlon"
 __copyright__ = "Copyright 2014, University of Florida"
 __license__ = "BSD 3-Clause license"
-__version__ = "0.0"
+__version__ = "0.1"
 
 __harvest_text__ = "Python Medinfo " + __version__
 
@@ -368,56 +371,6 @@ def improve_certification(cert):
     certs.append(cert)
     return certs
 
-def select_degree_fields(rawdata):
-    """
-    Given degree fields from medinfo raw data, select fields that appear to
-    desceribe degrees (not other training)
-    """
-    k = 0
-    fields = []
-    data = []
-    for d in rawdata:
-        if d != '':
-            data.append(d)
-    print "Before"
-    print data
-    while k < len(data):
-        field = data[k]
-        print "\tField",field
-        if field == 'Medical School':
-            entry = 'Medical School - ' + data[k+1]
-            k = k + 2
-            if data[k][0] == '1' or data[k][0] == '2':
-                entry = entry + ', ' + data[k]
-                k = k + 1
-            fields.append(entry)
-        elif field == 'Residency':
-            k = k + 3
-        elif field == 'Intern':
-            k = k + 3
-        elif field == 'Fellow':
-            k = k + 3
-        elif field.find('Medical School') > -1:
-            fields = fields.append(field)
-            k = k + 1
-        elif field.find('Residency') > -1:
-            k = k + 1
-        elif field.find('Residnecy') > -1:
-            k = k + 1
-        elif field.find('Fellow') > -1:
-            k = k + 1
-        elif field.find('Intern') > -1:
-            k = k + 1
-        elif field.find('ertificate') > -1:
-            k = k + 1
-        else:
-            if field is not None:
-                fields.append(field)
-            k = k + 1
-    print "After"
-    print fields
-    return fields
-
 def prepare_medinfo(input_file_name):
     """
     Given a file name with medinfo data, use element tree to parse the
@@ -436,13 +389,11 @@ def prepare_medinfo(input_file_name):
                 mperson['photo_url'] = child.text
             for child in provider.findall('honors'):
                 mperson['honors'] = child.text
-            mperson['degrees'] = []
+            for child in provider.findall('displayname'):
+                mperson['display_name'] = child.text
+            mperson['education'] = ''
             for child in provider.findall('education'):
-                rawdegrees = select_degree_fields(child.text.split('\n'))
-                for rawdegree in rawdegrees:
-                    rawdegree.strip()
-                    if len(rawdegree) > 0:
-                        mperson['degrees'].append(rawdegree)
+                mperson['education'] = child.text
             mperson['board_certifications'] = []
             for child in provider.findall('boardcertification'):
                 rawcerts = child.text.split('\n')
@@ -456,6 +407,27 @@ def prepare_medinfo(input_file_name):
                                 mperson['board_certifications'].append(cert)
             medinfo.append(mperson)
     return medinfo
+
+def write_deg_file(file, data):
+    """
+    Given a file handle and medinfo data strucutre, write a CSV of
+    degree information for hand editing
+    """
+    file.write('ufid|name|degree|institution|year|field|education\n')
+    for person in medinfo:
+        edu = person['education']
+        edu = edu.strip()
+        edu = person['education'].replace('\n',';')
+        edu = edu.replace(';;;',';')
+        edu = edu.replace(';;',';')
+        if len(edu) > 0 and edu[0] == ';':
+            edu = edu[1:]
+        if edu == '':
+            continue
+        line = person['ufid'] + '|' + person['display_name'] + '||||' + \
+            edu + '\n'
+        file.write(line)
+    return
 
 def update_person(vperson, sperson):
     """
@@ -496,6 +468,8 @@ log_file = sys.stdout
 ##                       errors='xmlcharrefreplace')
 exc_file = codecs.open(file_name+"_exc.txt", mode='w', encoding='ascii',
                        errors='xmlcharrefreplace')
+deg_file = codecs.open(file_name+"_deg.txt", mode='w', encoding='ascii',
+                       errors='xmlcharrefreplace')
 
 ardf = rdf_header()
 srdf = rdf_header()
@@ -506,6 +480,7 @@ print >>log_file, datetime.now(), "VIVO Tools Version", vt.__version__
 print >>log_file, datetime.now(), "Read Medinfo Data"
 
 medinfo = prepare_medinfo(input_file_name)
+write_deg_file(deg_file, medinfo)
 table = tabulate_certifications(medinfo)
 for key,val in sorted(table.items()):
     print key,'\t\t',val
@@ -536,6 +511,8 @@ add_file.write(ardf)
 sub_file.write(srdf)
 add_file.close()
 sub_file.close()
+exc_file.close()
+deg_file.close()
 
 print >>log_file, datetime.now(), "Found = ", found
 print >>log_file, datetime.now(), "Fot found = ", not_found
